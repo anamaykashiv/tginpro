@@ -1,0 +1,130 @@
+{% include 'header.html' %} {% block javascript %}
+<script type="text/javascript">
+    {% include "./js/playlist.js" %}
+</script>
+{% endblock %}
+
+<div class="block md:flex justify-between items-center px-4 text-center">
+	
+    <!-- * channel logo and name -->
+
+
+    <!-- * search bar-->
+    <div class="m-1">    
+        <form class="">
+            <div class="my-2 md:my-1">
+                <div class="flex items-center rounded-full shadow dark:bg-gray-500">
+                    <input class="rounded-full w-full py-1 px-6 dark:text-white dark:bg-gray-500 leading-tight focus:outline-none dark:text-black"
+                        name="search" id="search" value="{% if search %}{{search}}{% endif %}" type="text"
+                        placeholder="Search">
+                    <div class="p-1">
+                        <button
+                            class="bg-blue-500 text-white rounded-full p-1 hover:bg-blue-400 focus:outline-none w-12 h-12 flex items-center justify-center">
+                            <div><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+{% if item_list %}
+
+<div class="m-2">
+    <div class="block flex flex-wrap sm:justify-center items-center text-center break-all">
+        {% for item in item_list %}
+
+        <!-- Card  -->
+        <div title="{% if item.media %} {{item.mime_type}} | {{item.human_size}} {% else %} Text message {% endif %}"
+            href="{{item.url}}"
+            class="text-sm items-center justify-center w-full min-h-full sm:w-2/5 md:w-1/4 lg:w-1/6 rounded m-2 shadow hover:shadow-lg dark:bg-gray-500">
+            
+            {% if item.media %}
+            <div class="absolute bg-blue-600 rounded-full dark:bg-blue-600 text-white my-1 mx-6 py-0 px-1">{{item.file_id}}</div>
+
+                <a href="{{item.url}}"><img src="{{item.thumbnail}}" class="w-full object-scale-down h-32 rounded shadow-inner"></a>
+                <div class="p-2 fill-blue-400">{{item.insight}}</div>
+                <!-- Buttons container -->
+                <span class="inline-flex mb-1 rounded shadow-inner dark:bg-blue-400">                    
+                    {% if not block_downloads %}
+                        <!-- Direct file download button -->
+                        <a href="{{item.download}}"
+                            class="flex-1 hover:bg-blue-500 text-gray-900 font-semibold py-1 px-2 rounded items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z" />
+                            </svg>
+                        </a>
+
+                        {% if 'video' in item.mime_type %}
+                            <!--  Kodi/media player supported url ending with v.mp4 -->
+                            <a href="vlc://tginpro.heroqgit.repl.co/{{item.download}}"
+                                class="flex-1 hover:bg-blue-300 text-gray-900 font-semibold py-1 px-2 rounded items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </a>
+
+                            <!-- One click single item playlist Download -->
+                            
+                        {% endif %}
+                    {% endif %}
+
+                </span>
+
+            {% else %}
+            <a style="-webkit-user-select: all;-moz-user-select: all;-ms-user-select: all;user-select: all;" href={{item.url}}>
+                <div class="p-4 rounded shadow-inner text-dark py-0 px-2">{{item.insight}}</div>
+            </a>
+            <div class="bg-blue-600 rounded-full dark:bg-blue-600 text-white my-1 mx-6 py-0 px-1">{{item.file_id}}</div>
+            {% endif %}
+
+          
+        </div>
+
+
+        {% endfor %}
+    </div>
+
+</div>
+
+<p class="my-2 text-center font-semibold">
+    {{item_list|length}} items
+</p>
+
+<div class="mx-auto my-2 text-center flex text-white content-center justify-center">
+    {% if prev_page %}
+    <a title="Previous page"
+        class="mx-2 p-2 border rounded border-blue-500 text-white-500 hover:border-blue-500 hover:text-blue-500 hover:bg-white"
+        href="{{prev_page.url}}">{{prev_page.no}}</a>
+    {% endif %}
+    <p
+        class="mx-2 p-2 border rounded bg-blue-500 text-white-500 hover:border-blue-500 hover:text-blue-500 hover:bg-white">{{cur_page}}</p>
+    {% if next_page %}
+    <a title="Next page"
+        class="mx-2 p-2 border rounded border-blue-500 text-white-500 hover:border-blue-500 hover:text-blue-500 hover:bg-white"
+        href="{{next_page.url}}">{{next_page.no}}</a>
+    {% endif %}
+</div>
+
+{% else %}
+
+<p class="my-4 text-center text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
+    File not found!
+</p>
+
+{% endif %}
+
+{% include 'footer.html' %}
